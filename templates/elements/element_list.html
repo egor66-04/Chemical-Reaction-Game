@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Кнопка возврата на главную -->
+    <div class="d-flex justify-content-start mb-4">
+        <a href="/" class="btn btn-back">
+            <i class="bi bi-arrow-left"></i> Вернуться на главную
+        </a>
+    </div>
+
+    <h1 class="text-center mb-4" style="color: #ff6584; font-size: 2.5rem; font-weight: bold;">Интерактивная таблица Менделеева</h1>
+
+    <!-- Список элементов -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        {% for element in elements %}
+            <div class="col">
+                <!-- Карточка элемента с эффектами -->
+                <div class="card element-card text-center" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 20px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-white element-symbol">{{ element.symbol }}</h5>
+                        <p class="card-text text-white">{{ element.name }}</p>
+                        <p class="text-muted text-white">#{{ element.atomic_number }}</p>
+                    </div>
+                    <a href="#" class="stretched-link" data-bs-toggle="modal" data-bs-target="#elementModal{{ element.id }}"></a>
+                </div>
+            </div>
+
+            <!-- Модальное окно для элемента -->
+            <div class="modal fade" id="elementModal{{ element.id }}" tabindex="-1" aria-labelledby="elementModalLabel{{ element.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius: 15px;">
+                        <div class="modal-header" style="background-color: #ff6584; color: #fff;">
+                            <h5 class="modal-title" id="elementModalLabel{{ element.id }}">{{ element.name }} ({{ element.symbol }})</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="background-color: #fff;">
+                            <p><strong>Категория:</strong> {{ element.category }}</p>
+                            <p><strong>Описание:</strong> {{ element.description }}</p>
+                            <p><strong>Применение:</strong> {{ element.application }}</p>
+                            <p><strong>Факты:</strong> {{ element.fact }}</p>
+                            <a href="{{ element.wiki_link }}" target="_blank" class="btn btn-custom" style="background-color: #ff6584; color: #fff;">Подробнее на Википедии</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Дополнительные стили для улучшенного дизайна -->
+<style>
+    .btn-back {
+        background-color: #ff6584;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back:hover {
+        background-color: #ff4a6e;
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .element-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .element-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .element-symbol {
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-body p {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .modal-body a {
+        padding: 10px 20px;
+        border-radius: 50px;
+        background-color: #ff6584;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .modal-body a:hover {
+        background-color: #ff4a6e;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,304 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Химическая игра</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            overflow: hidden;
+        }
+
+        /* Применение градиента ко всему экрану */
+        html, body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+        }
+
+        /* Кнопка "Вернуться на главную страницу" */
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff6f91;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            z-index: 100; /* Устанавливаем приоритет кнопки */
+        }
+
+        .back-btn:hover {
+            background-color: #ff4e75;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            padding: 20px 0;
+        }
+
+        /* Правая сторона с колбой и результатом */
+        .reaction-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .colba {
+            width: 150px;
+            height: 300px;
+            background: url('{% static "game/your_colba_icon.png" %}') no-repeat center center;
+            background-size: contain;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .reaction-text-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .reaction-text {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            width: 60%;
+            text-align: center;
+            font-size: 1rem;
+            color: #333;
+            margin-right: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .reaction-btn {
+            background-color: #ff6f91;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .reaction-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .reaction-btn:hover:enabled {
+            background-color: #ff4e75;
+        }
+
+        /* Карточки элементов снизу */
+        .elements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(255, 179, 198, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow-y: auto; /* Прокрутка для элементов на мобильных устройствах */
+            max-height: 30vh; /* Ограничение высоты на мобильных устройствах */
+        }
+
+        .element {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .element:hover {
+            transform: scale(1.1);
+        }
+
+        .element h3 {
+            font-size: 1rem;
+            color: #ff6f91;
+        }
+
+        .element p {
+            font-size: 0.8rem;
+            color: #333;
+        }
+
+        /* Адаптивные стили для мобильных устройств */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+                margin-top: 60px; /* Увеличиваем отступ сверху, чтобы заголовок не был перекрыт */
+            }
+
+            .back-btn {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+                top: 5px; /* Уменьшаем отступ сверху */
+                left: 5px; /* Уменьшаем отступ слева */
+            }
+
+            .colba {
+                width: 120px;
+                height: 240px;
+            }
+
+            .reaction-text {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .reaction-btn {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            .element {
+                padding: 6px;
+            }
+
+            .element h3 {
+                font-size: 0.8rem;
+            }
+
+            .element p {
+                font-size: 0.6rem;
+            }
+
+            .elements-container {
+                max-height: 40vh; /* Увеличиваем высоту контейнера элементов */
+                padding: 10px;
+                overflow-y: scroll; /* Добавляем вертикальную прокрутку для мобильных устройств */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Кнопка "Вернуться на главную страницу" -->
+    <a href="/" class="back-btn">Вернуться на главную</a>
+
+    <h1>Смешивание элементов</h1>
+
+    <div class="container">
+        <!-- Правая сторона с колбой и результатом -->
+        <div class="reaction-container">
+            <div class="colba"></div>
+
+            <!-- Текст и кнопка "Смешать" рядом -->
+            <div class="reaction-text-container">
+                <div id="reaction-text" class="reaction-text">Выберите два элемента для реакции</div>
+                <button id="reaction-btn" class="reaction-btn" onclick="performReaction()" disabled>Смешать</button>
+            </div>
+        </div>
+
+        <!-- Левая сторона с элементами снизу -->
+        <div class="elements-container" id="element-list">
+            {% for element in elements %}
+                <div class="element" onclick="selectElement('{{ element.symbol }}', '{{ element.name }}')">
+                    <h3>{{ element.symbol }}</h3>
+                    <p>{{ element.name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        let selectedElements = [];
+
+        // Функция для выбора элемента
+        function selectElement(symbol, name) {
+            if (selectedElements.length < 2 && !selectedElements.some(el => el.symbol === symbol)) {
+                selectedElements.push({ symbol, name });
+                document.getElementById('reaction-text').textContent = `Выбраны: ${selectedElements.map(el => el.name).join(' и ')}`;
+            }
+
+            if (selectedElements.length === 2) {
+                document.getElementById('reaction-btn').disabled = false;
+            }
+        }
+
+        // Функция для выполнения реакции
+        function performReaction() {
+            if (selectedElements.length === 2) {
+                const element1 = selectedElements[0].symbol;
+                const element2 = selectedElements[1].symbol;
+                let reaction = '';
+
+                // Пример комбинаций элементов
+                if ((element1 === 'H' && element2 === 'O₂') || (element1 === 'O₂' && element2 === 'H')) {
+                    reaction = 'Вода (H₂O)';
+                } else if ((element1 === 'Na' && element2 === 'Cl') || (element1 === 'Cl' && element2 === 'Na')) {
+                    reaction = 'Соль (NaCl)';
+                } else if ((element1 === 'Pu' && element2 === 'K') || (element1 === 'K' && element2 === 'Pu')) {
+                    reaction = 'Произошёл взрыв с выделением огромного количества энергии!';
+                } else {
+                    reaction = 'Реакция не удалась!';
+                }
+
+                // Показать результат реакции
+                document.getElementById('reaction-text').textContent = `Вы смешали ${selectedElements[0].name} и ${selectedElements[1].name}: ${reaction}`;
+
+                // Сброс выбора через некоторое время
+                setTimeout(() => {
+                    selectedElements = [];
+                    document.getElementById('reaction-text').textContent = 'Выберите два элемента для реакции';
+                    document.getElementById('reaction-btn').disabled = true;
+                }, 3000);
+            }
+        }
+    </script>
+
+</body>
+</html>
