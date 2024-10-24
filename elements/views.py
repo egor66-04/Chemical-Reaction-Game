@@ -1,7 +1,15 @@
 from django.shortcuts import render
 from .models import Element
 from django.db.models import Q
+from django.http import HttpResponse
+from gtts import gTTS
+import os
 
+# Главная страница
+def home(request):
+    return render(request, 'home.html')  # Этот шаблон будет отображать главную страницу
+
+# Таблица Менделеева (страница с элементами)
 def element_list(request):
     # Получаем категорию из GET-запроса, по умолчанию "Все элементы"
     category = request.GET.get('category', 'Все элементы')
@@ -27,15 +35,24 @@ def element_list(request):
         'search_query': search_query
     })
 
-from django.shortcuts import render
-from .models import Element
+# Преобразование текста в речь
+def text_to_speech(request):
+    # Получаем текст из параметров GET-запроса
+    text = request.GET.get('text', '')
 
-# Главная страница
-def home(request):
-    return render(request, 'home.html')  # Этот шаблон будет отображать главную страницу
+    if text:
+        # Используем gTTS для преобразования текста в речь
+        tts = gTTS(text, lang='ru')
+        file_path = "/tmp/speech.mp3"
+        tts.save(file_path)
 
-# Таблица Менделеева
-def element_list(request):
-    elements = Element.objects.all()  # Получаем все элементы
-    return render(request, 'elements/element_list.html', {'elements': elements})  # Передаём их в шаблон
+        # Читаем сохранённый файл и отправляем его как ответ
+        with open(file_path, 'rb') as speech_file:
+            response = HttpResponse(speech_file.read(), content_type='audio/mpeg')
+            response['Content-Disposition'] = 'inline; filename="speech.mp3"'
 
+        # Удаляем файл после отправки
+        os.remove(file_path)
+        return response
+    else:
+        return HttpResponse("No text provided for speech", status=400)

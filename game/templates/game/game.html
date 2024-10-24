@@ -175,6 +175,21 @@
             color: #333;
         }
 
+        /* Кнопка включения/выключения озвучки */
+        .toggle-audio-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .toggle-audio-button:hover {
+            background-color: #0056b3;
+        }
+
         /* Адаптивные стили для мобильных устройств */
         @media (max-width: 768px) {
             h1 {
@@ -227,9 +242,9 @@
 <body>
 
     <!-- Кнопка "Вернуться на главную страницу" -->
-    <a href="/" class="back-btn">Вернуться на главную</a>
+    <a href="/" class="back-btn speak-text" data-text="Вернуться на главную">Вернуться на главную</a>
 
-    <h1>Смешивание элементов</h1>
+    <h1 class="speak-text" data-text="Смешивание элементов">Смешивание элементов</h1>
 
     <div class="container">
         <!-- Правая сторона с колбой и результатом -->
@@ -238,15 +253,15 @@
 
             <!-- Текст и кнопка "Смешать" рядом -->
             <div class="reaction-text-container">
-                <div id="reaction-text" class="reaction-text">Выберите два элемента для реакции</div>
-                <button id="reaction-btn" class="reaction-btn" onclick="performReaction()" disabled>Смешать</button>
+                <div id="reaction-text" class="reaction-text speak-text" data-text="Выберите два элемента для реакции">Выберите два элемента для реакции</div>
+                <button id="reaction-btn" class="reaction-btn speak-text" data-text="Смешать" onclick="performReaction()" disabled>Смешать</button>
             </div>
         </div>
 
         <!-- Левая сторона с элементами снизу -->
         <div class="elements-container" id="element-list">
             {% for element in elements %}
-                <div class="element" onclick="selectElement('{{ element.symbol }}', '{{ element.name }}')">
+                <div class="element speak-text" onclick="selectElement('{{ element.symbol }}', '{{ element.name }}')" data-text="{{ element.symbol }} {{ element.name }}">
                     <h3>{{ element.symbol }}</h3>
                     <p>{{ element.name }}</p>
                 </div>
@@ -254,8 +269,18 @@
         </div>
     </div>
 
+    <!-- Кнопка включения/выключения озвучки -->
+    <button id="toggle-audio" class="toggle-audio-button">Режим озвучки: Включить</button>
+
     <script>
         let selectedElements = [];
+        let audioEnabled = false;  // Изначально озвучка выключена
+
+        const button = document.getElementById('toggle-audio');
+        button.addEventListener('click', function() {
+            audioEnabled = !audioEnabled;
+            button.textContent = audioEnabled ? 'Режим озвучки: Выключить' : 'Режим озвучки: Включить';
+        });
 
         // Функция для выбора элемента
         function selectElement(symbol, name) {
@@ -298,6 +323,19 @@
                 }, 3000);
             }
         }
+
+        // Озвучивание текста при наведении
+        document.querySelectorAll('.speak-text').forEach(function(element) {
+            element.addEventListener('mouseover', function() {
+                if (audioEnabled) {
+                    const text = element.getAttribute('data-text') || element.textContent.trim();
+                    if (text) {
+                        const audio = new Audio(`/text_to_speech/?text=${encodeURIComponent(text)}`);
+                        audio.play();
+                    }
+                }
+            });
+        });
     </script>
 
 </body>

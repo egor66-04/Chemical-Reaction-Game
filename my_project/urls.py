@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.home, name='home'),  # Маршрут для главной страницы
     path('ptable/', views.element_list, name='element_list'),  # Маршрут для страницы таблицы Менделеева
     path('game/', include('game.urls')),  # Добавляем маршрут к мини-игре
+    path('text_to_speech/', views.text_to_speech, name='text_to_speech'),  # Маршрут для озвучки текста
 ]

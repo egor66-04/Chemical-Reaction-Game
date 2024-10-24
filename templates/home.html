@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUBBLE PRO — Химия легко</title>
+    <title>BUBBLE</title>
 
     <!-- Bootstrap и иконки -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,9 +11,9 @@
 
     <!-- Стили -->
     <style>
-        /* Основной фон с градиентом */
+        /* Основной фон */
         body {
-            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            background-color: #e7f3ff;  /* Цвет фона */
             min-height: 100vh;
             font-family: 'Arial', sans-serif;
             color: #333;
@@ -36,11 +36,11 @@
             color: #555;
         }
 
-        /* Оформление кнопок */
+        /* Оформление кнопок в виде кружков */
         .btn-bubble {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            background-color: #ff069e;  /* Цвет кнопок */
             border: none;
-            border-radius: 50%;
+            border-radius: 50%;  /* Закругляем до круга */
             width: 150px;
             height: 150px;
             color: #fff;
@@ -63,6 +63,40 @@
         .btn-bubble i {
             font-size: 2rem;
             margin-bottom: 10px;
+        }
+
+        /* Кнопка включения/выключения озвучки */
+        .toggle-audio-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .toggle-audio-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Яркая кнопка подписки */
+        .btn-subscribe {
+            margin-top: 30px;
+            padding: 15px 30px;
+            background-color: #ff6584;  /* Ярко-розовый цвет */
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-subscribe:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
         }
 
         /* Анимация для элементов */
@@ -97,29 +131,63 @@
 <body>
     <!-- Контент страницы -->
     <div class="text-center fade-in">
-        <h1>Химия легко с BUBBLE PRO</h1>
-        <h2>Увлекательные игры и эксперименты для детей от 7 до 14 лет</h2>
+        <h1 id="main-title" class="speak-text" data-text="Химия легко с BUBBLE PRO">BUBBLE</h1>
+        <h2 id="sub-title" class="speak-text" data-text="Увлекательные игры и эксперименты для детей от 7 до 14 лет">Увлекательные игры и эксперименты для детей от 7 до 14 лет</h2>
 
         <!-- Кнопки для выбора -->
         <div class="d-flex justify-content-center gap-5 mt-5">
-            <a href="/game" class="btn btn-bubble">
+            <a href="/game" class="btn btn-bubble speak-text" data-text="Игры">
                 <i class="bi bi-controller"></i>
                 Игры
             </a>
-            <a href="/ptable" class="btn btn-bubble">
+            <a href="/ptable" class="btn btn-bubble speak-text" data-text="Таблица Менделеева">
                 <i class="bi bi-table"></i>
                 Таблица Менделеева
             </a>
         </div>
 
         <!-- Приветственное сообщение -->
-        <div class="welcome-message mt-4">
+        <div class="welcome-message mt-4 speak-text" id="welcome-text" data-text="Привет! Добро пожаловать в мир химии!">
             <i class="bi bi-flask-fill icon-chemistry"></i>
             <p>Привет! Добро пожаловать в мир химии!</p>
         </div>
+
+        <!-- Кнопка подписки -->
+        <button class="btn-subscribe">Подписка на BUBBLE PRO</button>
+
+        <!-- Кнопка для включения/выключения озвучки -->
+        <button id="toggle-audio" class="toggle-audio-button">Режим озвучки: Включить</button>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Скрипт для озвучивания текста -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let audioEnabled = false;  // Изначально озвучка выключена
+
+            const button = document.getElementById('toggle-audio');
+            button.textContent = audioEnabled ? 'Режим озвучки: Выключить' : 'Режим озвучки: Включить';
+
+            button.addEventListener('click', function() {
+                audioEnabled = !audioEnabled;
+                button.textContent = audioEnabled ? 'Режим озвучки: Выключить' : 'Режим озвучки: Включить';
+            });
+
+            // Добавляем обработчик события mouseover для всех элементов с классом "speak-text"
+            document.querySelectorAll('.speak-text').forEach(function(element) {
+                element.addEventListener('mouseover', function() {
+                    if (audioEnabled) {
+                        const text = element.getAttribute('data-text') || element.textContent.trim();
+                        if (text) {
+                            const audio = new Audio(`/text_to_speech/?text=${encodeURIComponent(text)}`);
+                            audio.play();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
